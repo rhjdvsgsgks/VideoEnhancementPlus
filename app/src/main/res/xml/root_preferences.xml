@@ -1,0 +1,32 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <PreferenceCategory app:title="@string/hook_header">
+
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:key="setIsEffectWhiteList"
+            app:title="@string/setIsEffectWhiteList" />
+        <SwitchPreferenceCompat
+            app:defaultValue="false"
+            app:key="setIsDemoWhiteList"
+            app:title="@string/setIsDemoWhiteList" />
+    </PreferenceCategory>
+    <PreferenceCategory app:title="@string/msic_header">
+
+
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:key="instantmode"
+            app:title="@string/instantmode"
+            app:summaryOff="@string/instantmode_summary_off"
+            app:summaryOn="@string/instantmode_summary_on" />
+        <SwitchPreferenceCompat
+            app:defaultValue="false"
+            app:key="showtoast"
+            app:title="@string/showtoast" />
+    </PreferenceCategory>
+
+
+</PreferenceScreen>

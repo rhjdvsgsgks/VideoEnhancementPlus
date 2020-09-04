@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">VideoEnhancementPlus</string>
+
+    <string name="setIsEffectWhiteList">setIsEffectWhiteList</string>
+    <string name="setIsDemoWhiteList">setIsDemoWhiteList</string>
+    <string name="instantmode">instant mode</string>
+    <string name="showtoast">show toast</string>
+    <string name="instantmode_summary_off">better battery life, changes will be applied after reboot</string>
+    <string name="instantmode_summary_on">changes applied instantly</string>
+    <string name="hook_header">Hook</string>
+    <string name="msic_header">Msic</string>
+
+
+</resources>
