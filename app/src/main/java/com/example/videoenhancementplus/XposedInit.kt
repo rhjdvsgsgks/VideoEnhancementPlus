@@ -1,73 +1,138 @@
 package com.example.videoenhancementplus
 
-import android.app.AndroidAppHelper
-import android.content.Context
-import android.os.Handler
-import android.os.Looper
-import android.widget.Toast
-import de.robv.android.xposed.*
+import de.robv.android.xposed.IXposedHookLoadPackage
+import de.robv.android.xposed.XC_MethodReplacement
+import de.robv.android.xposed.XSharedPreferences
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam
 
-class XposedInit : IXposedHookLoadPackage, IXposedHookZygoteInit {
-    override fun initZygote(startupParam: IXposedHookZygoteInit.StartupParam) {
-        modulePath = startupParam.modulePath
-    }
-    companion object {
-        private val currentContext by lazy { AndroidAppHelper.currentApplication() as Context }
-        private val handler by lazy { Handler(Looper.getMainLooper()) }
-        private val toast by lazy { Toast.makeText(currentContext, "", Toast.LENGTH_LONG) }
-        lateinit var modulePath: String
+class XposedInit : IXposedHookLoadPackage {
 
-        fun toastlog(msg: String, showtoast: Boolean) {
-            if (showtoast) {
-                handler.post {
-                    toast.setText("VideoEnhancementPlus:\n$msg")
-                    toast.show()
-                }
-            }
-            Log.i(msg)
-        }
-    }
+	override fun handleLoadPackage(lpparam: LoadPackageParam) {
+		when (lpparam.packageName) {
+			"com.sonymobile.swiqisystemservice" -> {
 
-    //@Throws(Throwable::class)
-    override fun handleLoadPackage(lpparam: LoadPackageParam) {
-        if (lpparam.packageName != "com.sonymobile.swiqisystemservice") return
+				val prefs = XSharedPreferences("com.example.videoenhancementplus")
 
-        val prefs = XSharedPreferences("com.example.videoenhancementplus")
+				val instantmode = prefs.getBoolean("instantmode", false)
+				val hijacklog = prefs.getBoolean("hijacklog", false)
 
-        val instantmode = prefs.getBoolean("instantmode",true)
-        val showtoast = prefs.getBoolean("showtoast",false)
+				if (hijacklog) {
 
-        toastlog("we are in com.sonymobile.swiqisystemservice", showtoast)
+					"com.sonymobile.swiqisystemservice.util.LogUtil".replaceMethod(lpparam.classLoader, "e", String::class.java, String::class.java) { param ->
+						Log.e("swiqisystemservice " + param.args[0] + ": " + param.args[1])
+					}
 
-        if (instantmode) {
-            val observerHook: (XC_MethodHook.MethodHookParam) -> Any? = {
-                prefs.reload()
-                val setIsEffectWhiteList = prefs.getBoolean("setIsEffectWhiteList",true)
-                val setIsDemoWhiteList = prefs.getBoolean("setIsDemoWhiteList",false)
+					"com.sonymobile.swiqisystemservice.util.LogUtil".replaceMethod(lpparam.classLoader, "w", String::class.java, String::class.java) { param ->
+						Log.w("swiqisystemservice " + param.args[0] + ": " + param.args[1])
+					}
 
-                toastlog(prefs.all.toString(), showtoast)
+					"com.sonymobile.swiqisystemservice.util.LogUtil".replaceMethod(lpparam.classLoader, "i", String::class.java, String::class.java) { param ->
+						Log.i("swiqisystemservice " + param.args[0] + ": " + param.args[1])
+					}
 
-                lpparam.classLoader.loadClass("com.sonymobile.swiqisystemservice.HidlSwiqiAccessor").callStaticMethod("setIsEffectWhiteList",setIsEffectWhiteList)
-                lpparam.classLoader.loadClass("com.sonymobile.swiqisystemservice.HidlSwiqiAccessor").callStaticMethod("setIsDemoWhiteList",setIsDemoWhiteList)
+					"com.sonymobile.swiqisystemservice.util.LogUtil".replaceMethod(lpparam.classLoader, "d", String::class.java, String::class.java) { param ->
+						Log.d("swiqisystemservice " + param.args[0] + ": " + param.args[1])
+					}
 
-                //toastlog("setIsEffectWhiteList $setIsEffectWhiteList\nsetIsDemoWhiteList $setIsDemoWhiteList", showtoast)
+					"com.sonymobile.swiqisystemservice.util.LogUtil".replaceMethod(lpparam.classLoader, "v", String::class.java, String::class.java) { param ->
+						Log.v("swiqisystemservice " + param.args[0] + ": " + param.args[1])
+					}
 
-            }
-            "com.sonymobile.swiqisystemservice.observer.ForegroundAppObserver".replaceMethod(lpparam.classLoader,"notifyForegroundActivityChanged",hooker = observerHook)
-        } else {
-            val setIsEffectWhiteList = prefs.getBoolean("setIsEffectWhiteList",true)
-            val setIsDemoWhiteList = prefs.getBoolean("setIsDemoWhiteList",false)
+				}
 
-            toastlog(prefs.all.toString(), showtoast)
+				if (instantmode) {
 
-            lpparam.classLoader.loadClass("com.sonymobile.swiqisystemservice.HidlSwiqiAccessor").callStaticMethod("setIsEffectWhiteList",setIsEffectWhiteList)
-            lpparam.classLoader.loadClass("com.sonymobile.swiqisystemservice.HidlSwiqiAccessor").callStaticMethod("setIsDemoWhiteList",setIsDemoWhiteList)
+					"com.sonymobile.swiqisystemservice.observer.ForegroundAppObserver".replaceMethod(lpparam.classLoader, "notifyForegroundActivityChanged") {
 
-            "com.sonymobile.swiqisystemservice.observer.ForegroundAppObserver".hookMethod(lpparam.classLoader,"notifyForegroundActivityChanged", XC_MethodReplacement.DO_NOTHING)
+						prefs.reload()
+						val setIsEffectWhiteList = prefs.getBoolean("setIsEffectWhiteList", true)
+						val setIsDemoWhiteList = prefs.getBoolean("setIsDemoWhiteList", false)
 
-            //toastlog("setIsEffectWhiteList $setIsEffectWhiteList\nsetIsDemoWhiteList $setIsDemoWhiteList", showtoast)
+						lpparam.classLoader.loadClass("com.sonymobile.swiqisystemservice.HidlSwiqiAccessor").callStaticMethod("setIsEffectWhiteList", setIsEffectWhiteList)
+						lpparam.classLoader.loadClass("com.sonymobile.swiqisystemservice.HidlSwiqiAccessor").callStaticMethod("setIsDemoWhiteList", setIsDemoWhiteList)
 
-        }
-    }
+					}
+
+				} else {
+
+					val setIsEffectWhiteList = prefs.getBoolean("setIsEffectWhiteList", true)
+					val setIsDemoWhiteList = prefs.getBoolean("setIsDemoWhiteList", false)
+
+					lpparam.classLoader.loadClass("com.sonymobile.swiqisystemservice.HidlSwiqiAccessor").callStaticMethod("setIsEffectWhiteList", setIsEffectWhiteList)
+					lpparam.classLoader.loadClass("com.sonymobile.swiqisystemservice.HidlSwiqiAccessor").callStaticMethod("setIsDemoWhiteList", setIsDemoWhiteList)
+
+					"com.sonymobile.swiqisystemservice.observer.ForegroundAppObserver".hookMethod(lpparam.classLoader, "start", XC_MethodReplacement.DO_NOTHING)
+
+				}
+
+			}
+			"com.sonymobile.displaybooster" -> {
+
+				val prefs = XSharedPreferences("com.example.videoenhancementplus")
+
+				val instantmode = prefs.getBoolean("instantmode", false)
+				val hijacklog = prefs.getBoolean("hijacklog", false)
+
+				if (hijacklog) {
+
+					"com.sonymobile.displaybooster.LogUtil".replaceMethod(lpparam.classLoader, "e", String::class.java, String::class.java) { param ->
+						Log.e("DisplayBooster " + param.args[0] + ": " + param.args[1])
+					}
+
+					"com.sonymobile.displaybooster.LogUtil".replaceMethod(lpparam.classLoader, "w", String::class.java, String::class.java) { param ->
+						Log.w("DisplayBooster " + param.args[0] + ": " + param.args[1])
+					}
+
+					"com.sonymobile.displaybooster.LogUtil".replaceMethod(lpparam.classLoader, "i", String::class.java, String::class.java) { param ->
+						Log.i("DisplayBooster " + param.args[0] + ": " + param.args[1])
+					}
+
+					"com.sonymobile.displaybooster.LogUtil".replaceMethod(lpparam.classLoader, "d", String::class.java, String::class.java) { param ->
+						Log.d("DisplayBooster " + param.args[0] + ": " + param.args[1])
+					}
+
+					"com.sonymobile.displaybooster.LogUtil".replaceMethod(lpparam.classLoader, "v", String::class.java, String::class.java) { param ->
+						Log.v("DisplayBooster " + param.args[0] + ": " + param.args[1])
+					}
+
+				}
+
+				if (instantmode) {
+
+					"com.sonymobile.displaybooster.DisplayBoosterService".replaceMethod(lpparam.classLoader, "isCABCSuppported") {
+						return@replaceMethod true
+					}
+
+					"com.sonymobile.displaybooster.DisplayBoosterService".replaceMethod(lpparam.classLoader, "onForegroundChanged", Int::class.java, Int::class.java, Boolean::class.java) { param ->
+
+						prefs.reload()
+						val boostDisplay = prefs.getBoolean("boostDisplay", true)
+						val enableCABC = prefs.getBoolean("enableCABC", false)
+
+						param.thisObject.callMethod("boostDisplay", boostDisplay)
+						param.thisObject.callMethod("enableCABC", enableCABC)
+
+					}
+
+				} else {
+
+					val boostDisplay = prefs.getBoolean("boostDisplay", true)
+					val enableCABC = prefs.getBoolean("enableCABC", false)
+
+					"com.sonymobile.displaybooster.DisplayBoosterService".findClass(lpparam.classLoader)?.hookAfterConstructor { param ->
+						param.thisObject.setBooleanField("mIsCABC", true)
+					}
+
+					"com.sonymobile.displaybooster.DisplayBoosterService".hookBeforeMethod(lpparam.classLoader, "onCreate") { param ->
+						param.thisObject.setObjectField("mLight", lpparam.classLoader.loadClass("vendor.semc.hardware.light.V1_0.IExtLight").callStaticMethod("getService"))
+						param.thisObject.callMethod("boostDisplay", boostDisplay)
+						param.thisObject.callMethod("enableCABC", enableCABC)
+						param.result = null
+					}
+
+				}
+
+			}
+		}
+	}
 }
