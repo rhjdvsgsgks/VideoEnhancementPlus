@@ -3,12 +3,15 @@
 
     <string name="setIsEffectWhiteList">setIsEffectWhiteList</string>
     <string name="setIsDemoWhiteList">setIsDemoWhiteList</string>
+    <string name="boostDisplay">boostDisplay</string>
+    <string name="enableCABC">enableCABC</string>
     <string name="instantmode">instant mode</string>
-    <string name="showtoast">show toast</string>
+    <string name="hijacklog">hijack log</string>
     <string name="instantmode_summary_off">better battery life, changes will be applied after reboot</string>
     <string name="instantmode_summary_on">changes applied instantly</string>
-    <string name="hook_header">Hook</string>
+    <string name="hijacklog_summary">show hidden log</string>
+    <string name="videoenhancement_header">VideoEnhancement</string>
     <string name="msic_header">Msic</string>
-
+    <string name="hdr_header">HDR</string>
 
 </resources>

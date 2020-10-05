@@ -1,32 +1,49 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-
-    <PreferenceCategory app:title="@string/hook_header">
-
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:title="@string/videoenhancement_header">
         <SwitchPreferenceCompat
             app:defaultValue="true"
+            app:iconSpaceReserved="false"
             app:key="setIsEffectWhiteList"
             app:title="@string/setIsEffectWhiteList" />
         <SwitchPreferenceCompat
             app:defaultValue="false"
+            app:iconSpaceReserved="false"
             app:key="setIsDemoWhiteList"
             app:title="@string/setIsDemoWhiteList" />
     </PreferenceCategory>
-    <PreferenceCategory app:title="@string/msic_header">
-
-
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:title="@string/hdr_header">
         <SwitchPreferenceCompat
             app:defaultValue="true"
-            app:key="instantmode"
-            app:title="@string/instantmode"
-            app:summaryOff="@string/instantmode_summary_off"
-            app:summaryOn="@string/instantmode_summary_on" />
+            app:iconSpaceReserved="false"
+            app:key="boostDisplay"
+            app:title="@string/boostDisplay" />
         <SwitchPreferenceCompat
             app:defaultValue="false"
-            app:key="showtoast"
-            app:title="@string/showtoast" />
+            app:iconSpaceReserved="false"
+            app:key="enableCABC"
+            app:title="@string/enableCABC" />
     </PreferenceCategory>
-
-
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:title="@string/msic_header">
+        <SwitchPreferenceCompat
+            app:defaultValue="false"
+            app:iconSpaceReserved="false"
+            app:key="instantmode"
+            app:summaryOff="@string/instantmode_summary_off"
+            app:summaryOn="@string/instantmode_summary_on"
+            app:title="@string/instantmode" />
+        <SwitchPreferenceCompat
+            app:defaultValue="false"
+            app:iconSpaceReserved="false"
+            app:key="hijacklog"
+            app:summary="@string/hijacklog_summary"
+            app:title="@string/hijacklog" />
+    </PreferenceCategory>
 </PreferenceScreen>
