@@ -1,27 +1,30 @@
+@file:Suppress("DEPRECATION")
+
 package com.example.videoenhancementplus
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import androidx.preference.PreferenceFragmentCompat
+import android.preference.PreferenceFragment
 import java.io.File
 
-class SettingsActivity : AppCompatActivity() {
+class SettingsActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.settings_activity)
         if (savedInstanceState == null) {
-            supportFragmentManager
+            fragmentManager
                     .beginTransaction()
                     .replace(R.id.settings, SettingsFragment())
                     .commit()
         }
     }
 
-    class SettingsFragment : PreferenceFragmentCompat() {
+    class SettingsFragment : PreferenceFragment() {
 
-        override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-            setPreferencesFromResource(R.xml.root_preferences, rootKey)
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+            addPreferencesFromResource(R.xml.root_preferences)
         }
 
         override fun onPause() {
