@@ -4,9 +4,9 @@ package com.example.videoenhancementplus
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.preference.PreferenceFragment
-import java.io.File
 
 class SettingsActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,21 +22,11 @@ class SettingsActivity : Activity() {
 
     class SettingsFragment : PreferenceFragment() {
 
+        @SuppressLint("WorldReadableFiles")
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
+            preferenceManager.sharedPreferencesMode = Context.MODE_WORLD_READABLE
             addPreferencesFromResource(R.xml.root_preferences)
-        }
-
-        override fun onPause() {
-            super.onPause()
-            fixpermission()
-        }
-
-        @SuppressLint("SetWorldReadable")
-        fun fixpermission() {
-            File(context?.dataDir.toString()).setExecutable(true,false)
-            File(context?.dataDir.toString()+"/shared_prefs/"+activity?.packageName.toString()+"_preferences.xml").setReadable(true,false)
-            Log.d("permissions has been fixed "+context?.dataDir.toString()+"/shared_prefs/"+activity?.packageName.toString()+"_preferences.xml")
         }
     }
 }
